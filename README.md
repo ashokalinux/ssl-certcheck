@@ -1,11 +1,15 @@
 # ssl-certcheck
 Bash script to check expiration date on SSL certificates.  
+
 Emails user(s) to alert of expiring certificates. 
+
 Slack notification to alert of expiring certificates.
 
 ## Requirements
 Should work with any Linux distro with standard tools installed (openssl, curl, grep, etc...).  
+
 Requires a MTA (such as Exim4 or Postfix) for email notification. 
+
 Requires valid slack webhook url for slack notification.
 
 Tested on Ubuntu 18.04.  
