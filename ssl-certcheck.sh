@@ -12,7 +12,7 @@ CERT_FILE=/etc/haproxy/certs.list
 #RECIPIENT="ashok.shelke@modusbox.com shelkeashok9@gmail.com"
 #HOSTNAME=`hostname`
 HOSTNAME=MMD-PreProd-QA
-SLACK_URL=https://hooks.slack.com/services/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
+SLACK_URL=https://hooks.slack.com/services/xxxx/xxxxxxxxxxxxxxxxxxxx
 
 #check for certs expiring in 01 day or less, get their names and expiration dates
 while read CERTS; do
