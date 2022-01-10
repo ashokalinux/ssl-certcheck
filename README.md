@@ -8,9 +8,9 @@ Slack notification to alert of expiring certificates.
 ## Requirements
 Should work with any Linux distro with standard tools installed (openssl, curl, grep, etc...).  
 
-Requires a MTA (such as Exim4 or Postfix) for email notification. 
+Requires a MTA (such as Exim4 or Postfix) for email notification. for example Postfix MTA with AWS Simple Email Service - https://www.cyberciti.biz/faq/how-to-configure-aws-ses-with-postfix-mta/
 
-Requires valid slack webhook url for slack notification.
+Requires valid slack webhook url for slack notification. For more information https://api.slack.com/messaging/webhooks
 
 Tested on Ubuntu 18.04.  
 Create a file in /etc/haproxy called certs.list, and list the locations of all your certificates (example below).
