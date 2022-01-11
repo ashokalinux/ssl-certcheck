@@ -32,7 +32,7 @@ echo -e $temp_01d
 while read CERTS; do
   cert_name=`openssl x509 -issuer -noout -in $CERTS | sed 's/^issuer.*CN=\([a-zA-Z0-9\.\-\*]*\).*$/\1/'`
   cert_date=`openssl x509 -enddate -noout -in $CERTS | sed 's/.*=//'`
-  if openssl x509 -checkend $seconds_1d -noout -in $CERTS
+  if openssl x509 -checkend $seconds_1w -noout -in $CERTS
   then
     :
   else
