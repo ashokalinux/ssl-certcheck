@@ -45,3 +45,6 @@ issuer=CN = demowallet.preprodqak3s.qa.preprod.myanmarpay-pre.io will expire on 
 ```
 
 You can run the script out of root's crontab.
+For example - Daily “At 09:30.”
+
+30 09 * * * /bin/bash /root/ssl-certcheck/ssl-certcheck.sh
