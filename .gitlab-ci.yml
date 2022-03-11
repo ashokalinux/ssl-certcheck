@@ -1,0 +1,34 @@
+#### gitlab cert expiry job for incluster  haproxy 
+# pre requisite
+# 1.Define stage "SSL cert"
+# 2.Add variable "SSH_PRIVATE_KEY" in /settings/ci_cd/Variables 
+# 3.Add SLACK WEBHOOKS in  "ssl-certs/slack-url" file  
+
+SSL Cert Expiry :
+  stage: "SSL cert"
+  script:
+    - pwd
+    - aws s3 cp s3://${BUCKET}/${environment}/admin-gateway.conf ${CI_IMAGE_PROJECT_DIR}/ssl-cert/admin-gateway.conf
+    - cd ${CI_IMAGE_PROJECT_DIR}/ssl-cert
+    - export HOSTNAME=$client-$environment
+    - echo $HOSTNAME > name.temp
+    - cat name.temp
+    - export KUBECONFIG=admin-gateway.conf
+    - export HAPROXY=$(kubectl -n wso2 get pod | grep haproxy | awk '{print $1}')
+    - echo $HAPROXY
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - git clone git@github.com:modusintegration/mes-ssl-cert-expiration.git
+    - kubectl -n wso2 cp mes-ssl-cert-expiration/cert-list.sh $HAPROXY:/tmp -c haproxy
+    - kubectl -n wso2 exec -i $HAPROXY -c haproxy -- /bin/sh /tmp/cert-list.sh > certs.list #get cert list
+    - cat certs.list
+    - kubectl -n wso2 cp certs.list $HAPROXY:/etc/haproxy/certs.list -c haproxy
+    - kubectl -n wso2 exec -i $HAPROXY -c haproxy -- /bin/sh -c "ls -l /etc/haproxy/ ; cat /etc/haproxy/certs.list"
+    - /bin/sed -i s/MMD-PreProd-QA/$(tail name.temp)/g  mes-ssl-cert-expiration/ssl-certcheck.sh #for hostname / slack subject name
+    - cp $CI_PROJECT_DIR/ssl-certs/slack-url  . 
+    - /bin/sed -i "18a$(grep SLACK slack-url)" mes-ssl-cert-expiration/ssl-certcheck.sh  #append slck webhook  
+    - kubectl -n wso2 cp mes-ssl-cert-expiration/ssl-certcheck.sh $HAPROXY:/root/ssl-certcheck.sh -c haproxy
+#    - /usr/bin/git clone https://github.com/ashokalinux/ssl-certcheck.git
+#    - kubectl -n wso2 cp ssl-certcheck/ssl-certcheck.sh $HAPROXY:/root/ssl-certcheck.sh -c haproxy
+    - kubectl -n wso2 exec -i $HAPROXY -c haproxy -- /bin/sh -c "apk update ; apk add curl" #install curl
+    - kubectl -n wso2 exec -i $HAPROXY -c haproxy -- /bin/sh /root/ssl-certcheck.sh  #execute script
+  when: manual
